@@ -1,0 +1,472 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>AI for the Life Sciences</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css" id="theme">
+    <link rel="stylesheet" href="custom-styles.css">
+
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section data-background-image="./white_background.jpg">
+                <h1>ML for tackling Uncertainty in indirect, sparse geographical data</h1>
+                <br>
+                <div style="margin-top: 120px;">
+                    Cédric Travelletti<br>HES-SO Valais-Wallis Institute of Informatics, EPFL MathMat Group
+                </div>
+            </section>
+            <section data-auto-animate data-background-image="./white_background.jpg">
+                    <h2>Goal for today</h2>
+                <p>Investigate potential collaborations at the intersection of the interests of HES and sDANA</p>
+            </section>
+            <section data-auto-animate data-background-image="./white_background.jpg">
+                <h2>Goal for today</h2>
+                <p>Investigate potential collaborations at the intersection of the interests of HES and sDANA</p>
+                <h3>What do we have in common?</h3>
+                <p>Our data is:</p>
+                <ul>
+                    <li>geographical</li>
+                    <li>indirect</li>
+                    <li>sparse</li>
+                </ul>
+                <p>and most of all: UNCERTAIN</p>
+            </section>
+
+
+
+<section data-auto-animate>
+    <h2>Inverse Problems (i.e. "indirect data")</h2>
+    <div class="example-block">
+        <h3>“Can one hear the shape of a drum?”</h3>
+        <p style="text-align: right; font-size: 0.8em;">— M. Kac (1966)</p>
+    </div>
+    <div class="center-content">
+        <div style="display: flex; justify-content: center; align-items: center; gap: 40px;">
+            <div>
+                <img src="images/drum.png" alt="Drum shape 1" style="width: 1200px; height: 600px; object-fit: cover;">
+            </div>
+    </div>
+</section>
+
+
+<section data-auto-animate>
+    <h2>Example Inverse Problems</h2>
+    <div style="display: flex; justify-content: center; gap: 30px; margin-top: 20px;">
+        <div style="width: 30%; text-align: center;">
+            <img src="./images/remote_sensing_2.jpg" alt="Remote Sensing" style="width: 100%;">
+            <h4 style="color: blue; font-weight: bold;">Remote Sensing</h4>
+            <ul style="text-align: left; margin-top: 10px;">
+                <li>Observe reflected light</li>
+                <li>Recover land properties</li>
+            </ul>
+        </div>
+        <div style="width: 30%; text-align: center;">
+            <img src="./images/tomography_2.jpg" alt="Tomography" style="width: 100%; height: auto;">
+            <h4 style="color: blue; font-weight: bold;">Tomography</h4>
+            <ul style="text-align: left; margin-top: 10px;">
+                <li>Observe transmitted X-Ray intensity</li>
+                <li>Recover material properties</li>
+            </ul>
+        </div>
+        <div style="width: 30%; text-align: center;">
+            <img src="./images/geoscience.jpg" alt="Geoscience" style="width: 100%; height: auto;">
+            <h4 style="color: blue; font-weight: bold;">Geoscience</h4>
+            <ul style="text-align: left; margin-top: 10px;">
+                <li>Observe gravitational field</li>
+                <li>Recover underground properties</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+<section data-auto-animate>
+    <h2>Inverse Problems</h2>
+    <div class="block">
+        <h3>Definition</h3>
+        <p>Given Banach spaces <span class="math">\(\mathcal{X}, \mathcal{Y}\)</span> and an operator 
+        <span class="math">\(\mathcal{F}: \mathcal{X} \rightarrow \mathcal{Y}\)</span>, an <strong>inverse problem</strong> is the task 
+        of recovering the function <span class="math">\(\rho^* \in \mathcal{X}\)</span> from observation of 
+        <span class="math">\(\mathcal{F} \rho^*\)</span>.
+        </p>
+    </div>
+    <div style="margin-top: 20px; text-align: center;">
+        Here we focus on cases where the <strong>forward</strong> operator 
+        <span class="math">\(\mathcal{F}\)</span> is <strong>linear</strong>.
+    </div>
+</section>
+
+
+<section data-auto-animate>
+    <h2>Motivating Example: Stromboli Volcano</h2>
+    <ul>
+        <li>Want to learn the interior structure of the Stromboli volcano.</li>
+        <li>Only allowed to measure gravitational field on the surface.</li>
+    </ul>
+    <div style="margin-top: 20px; text-align: center;">
+        <img src="./images/stromboli.jpg" alt="Stromboli Volcano" style="width: 70%; height: auto;">
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Stromboli Volcano: Gravimetric Inversion</h2>
+    <div style="text-align: center; margin-bottom: 20px;">
+        Want to recover interior density field <span class="math">\(\rho^*: \mathcal{D} \rightarrow \mathbb{R}\)</span> from surface gravity.
+    </div>
+    <div style="display: flex; justify-content: center; gap: 20px;">
+        <div style="width: 45%; text-align: center;">
+            <img src="./images/data_vals_sphere_warm_crop-eps-converted-to-1.png" alt="Observed Gravity" style="width: 100%;">
+            <h4><strong>Observed Gravity</strong></h4>
+        </div>
+        <div style="width: 45%; text-align: center;">
+            <img src="./images/density_3d_crop-eps-converted-to-1.png" alt="Density" style="width: 100%;">
+            <h4><strong>Density</strong></h4>
+        </div>
+    </div>
+    <div style="margin-top: 20px; font-size: 0.9em; text-align: center;">
+        Gravity field <span class="math">\(\mathcal{G}(s_i, \rho^*)\)</span> at location <span class="math">\(\mathbf{s}\)</span> generated by underground density 
+        <span class="math">\(\rho\)</span> can be written as a linear operator:
+        <p>
+            <span class="math">\[
+                y_i = \mathcal{G}(s_i, \rho^*) = \int_\mathcal{D} \rho^*(x) g(x, s_i) \, dx
+            \]</span>
+        </p>
+    </div>
+</section>
+
+
+<section data-auto-animate>
+    <h2>Challenges</h2>
+</section>
+
+<section data-auto-animate>
+    <h2>Challenge 1: Regularization</h2>
+    <div class="block">
+        <h3>Problem</h3>
+        <p>For most inverse problems, data is not sufficient to identify a unique solution.</p>
+    </div>
+    <div style="margin-top: 40px; text-align: center;">
+        <h3 style="color: blue;">Conclusion:</h3>
+        <h3 style>Have to restrict search space by injecting prior knowledge.</h3>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Challenge 2: Data Scarcity</h2>
+    <div class="block">
+        <h3>Problem</h3>
+        <p>In most situations, data is hard to collect.</p>
+    </div>
+    <ul style="margin-top: 20px;">
+        <li>Expansive</li>
+        <li>Time-consuming</li>
+        <li>Dangerous (volcano/glacier inversion)</li>
+        <li>Invasive (medicine)</li>
+    </ul>
+    <div style="margin-top: 40px; text-align: center;">
+        <h3 style="color: blue;">Conclusion:</h3>
+        <h3>Need to identify the most promising data to collect.</h3>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Lessons</h2>
+    <p>Solving real-world inverse problems requires:</p>
+    <ol style="margin-top: 20px; font-size: 1.2em;">
+        <li>A flexible and transparent way of <strong>integrating a-priori knowledge</strong>.</li>
+        <li>A principled approach for <strong>guiding the data collection process</strong>.</li>
+    </ol>
+</section>
+
+<section data-auto-animate>
+    <h2>Bayesian Inversion</h2>
+</section>
+
+<section data-auto-animate>
+    <h2>Regularizing Inverse Problems: The Bayesian Approach</h2>
+    <p>
+        Inverse problems are difficult to solve because of their <strong>ill-posedness</strong> (Hadamard, 1902). 
+        A problem is well-posed if the solution:
+    </p>
+    <ul style="margin-top: 20px;">
+        <li><strong>Exists</strong></li>
+        <li><strong>Is unique</strong></li>
+        <li>Depends <strong>continuously</strong> on the data</li>
+    </ul>
+    <div class="block" style="margin-top: 40px;">
+        <h3>Bayesian Approach</h3>
+        <div style="margin-top: 20px;">
+            <ul>
+                <li>Assume <span class="math">\(\rho^*\)</span> is a realization of a random function.</li>
+                <li>Approximate <span class="math">\(\rho^*\)</span> using the conditional distribution, 
+                    conditionally on observed data.
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section data-auto-animate data-transition="none">
+    <h2>Idea: include prior knowledge</h2>
+    <div data-id="animcontainer">
+    <img height=600px" src="./images/ground_truth_no_data.png">
+    </div>
+</section>
+<section data-auto-animate=>
+    <h2>Idea: include prior knowledge</h2>
+    <div>
+        <ul>
+            <li>use prior knowledge to construct a class of functions to which $\rho^*$ belongs (GP).</li>
+        </ul>
+    </div>
+    <div data-id="animcontainer">
+    <img height=600px" src="./images/variance_prior_with_samples.png">
+    </div>
+</section>
+<section data-auto-animate data-transition="none">
+    <div>
+        <ul>
+            <li>Use prior knowledge to construct a class of functions to which $\rho^*$ belongs (GP).</li>
+            <li>Observe some data.</li>
+        </ul>
+    </div>
+    <div data-id="animcontainer">
+    <img height="600px" src="./images/ground_truth_with_data.png">
+    </div>
+</section>
+<section data-auto-animate data-transition="none">
+    <div>
+        <ul>
+            <li>Use prior knowledge to construct a class of functions to which $\rho^*$ belongs (GP).</li>
+            <li>Observe some data.</li>
+            <li>Keep functions that are compatible with the data.</li>
+        </ul>
+    </div>
+    <div data-id="animcontainer">
+    <img height="600px" src="./images/variance_1_samples.png">
+    </div>
+</section>
+<section data-auto-animate>
+    <div>
+        <ul>
+            <li>Use prior knowledge to construct a class of functions to which $\rho^*$ belongs (GP).</li>
+            <li>Observe some data.</li>
+            <li>Keep functions that are compatible with the data.</li>
+        </ul>
+    </div>
+    <div data-id="animcontainer">
+    <img height="600px" src="./images/variance_1.png">
+    </div>
+    <div data-id="animtext">
+        At the end, obtain a <span class="stronger">distribution</span> of probable functional shapes for $\rho^*$.
+    </div>
+</section>
+<section data-auto-animate>
+    <div data-id="animcontainer">
+    <img height="600px" src="./promising_region.png">
+    </div>
+    <div data-id="animtext">
+        At the end, obtain a <span class="stronger">distribution</span> of probable functional shapes for $\rho^*$.
+    </div>
+    <br>
+    <h3>Use predicted function shape and<span class="stronger">uncertainty</span> to guide exploration and find optimum</h3>
+</section>
+
+<section data-auto-animate>
+    <h2>Gaussian Processes 101</h2>
+    <div class="block">
+        <h3>Definition</h3>
+        <p>
+            A <em>Gaussian process</em> is a random function <span class="math">\(Z\)</span> on a set 
+            <span class="math">\(\mathcal{D}\)</span> such that for any finite set of points 
+            <span class="math">\(\mathbf{s}_1, \dotsc, \mathbf{s}_n \in \mathcal{D}\)</span>, the distribution of the vector 
+            <span class="math">\((Z_{\mathbf{s}_1}, \dotsc, Z_{\mathbf{s}_n})\)</span> is multivariate Gaussian.
+        </p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Gaussian Processes 101 (contd.)</h2>
+    <p>
+        A Gaussian process <span class="math">\(Z\)</span> is entirely characterized by its:
+    </p>
+    <ul>
+        <li><strong>Mean function:</strong> <span class="math">\(m_{\mathbf{s}} := \mathbb{E}[Z_{\mathbf{s}}]\)</span></li>
+        <li><strong>Covariance kernel:</strong> 
+            <span class="math">\(k(\mathbf{s}, \mathbf{s}') := \mathrm{Cov}(Z_{\mathbf{s}}, Z_{\mathbf{s}'})\)</span>
+        </li>
+    </ul>
+    <div style="text-align: center; margin-top: 20px;">
+        <p><span class="math">\(\implies Z \sim \mathrm{GP}(m, k)\)</span></p>
+    </div>
+    <div class="block" style="margin-top: 30px;">
+        <h3>Morality</h3>
+        <p>GPs allow <strong>transparent</strong> and <strong>flexible</strong> definition of priors over functions.</p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Covariance Kernel Controls <strong>Regularity</strong></h2>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+        <div style="width: 33%; text-align: center;">
+            <img src="images/variance_prior_with_samples_squared_exponential.png" alt="Gaussian Covariance" style="width: 100%;">
+            <h4><strong>Gaussian:</strong> \(C^{\infty}\)</h4>
+        </div>
+        <div style="width: 33%; text-align: center;">
+            <img src="images/variance_prior_with_samples_matern52.png" alt="Matérn 5/2 Covariance" style="width: 100%;">
+            <h4><strong>Matérn 5/2:</strong> \(C^{2}\)</h4>
+        </div>
+        <div style="width: 33%; text-align: center;">
+            <img src="images/variance_prior_with_samples_matern32.png" alt="Matérn 3/2 Covariance" style="width: 100%;">
+            <h4><strong>Matérn 3/2:</strong> \(C^{1}\)</h4>
+        </div>
+        <div style="width: 33%; text-align: center;">
+            <img src="images/variance_prior_with_samples_exponential.png" alt="Exponential Covariance" style="width: 100%;">
+            <h4><strong>Exponential:</strong> \(C^{0}\)</h4>
+        </div>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Mean Function Controls <strong>Trend</strong></h2>
+    <div style="display: flex; justify-content: center; gap: 20px;">
+        <div style="width: 45%; text-align: center;">
+            <img src="images/variance_prior_with_samples_linear_trend.png" alt="Linear Trend" style="width: 100%;">
+            <h4><strong>Linear</strong></h4>
+        </div>
+        <div style="width: 45%; text-align: center;">
+            <img src="images/variance_prior_with_samples_quadratic_trend.png" alt="Quadratic Trend" style="width: 100%;">
+            <h4><strong>Quadratic</strong></h4>
+        </div>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Gaussian Process-based Inversion</h2>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+        <div style="width: 35%; text-align: center;">
+            <img src="images/excu_profile_small_1_1.png" alt="XY Projection" style="width: 100%;">
+            <h4>XY Projection</h4>
+        </div>
+        <div style="width: 35%; text-align: center;">
+            <img src="images/excu_profile_small_1_2.png" alt="XZ Projection" style="width: 100%;">
+            <h4>XZ Projection</h4>
+        </div>
+        <div style="width: 35%; text-align: center;">
+            <img src="images/excu_profile_small_1_3.png" alt="YZ Projection" style="width: 100%;">
+            <h4>YZ Projection</h4>
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <p><strong>Inversion results with data location</strong></p>
+    </div>
+</section>
+
+
+<section data-auto-animate>
+    <h1>UQ and Sequential Uncertainty Reduction</h1>
+</section>
+
+<section data-auto-animate>
+    <h2>Motivation</h2>
+    <p>
+        Apart from enabling transparent and flexible specification of the prior, GP models output a 
+        <strong>probability distribution</strong>, allowing for 
+        <span style="color: blue;">quantification</span> and 
+        <span style="color: blue;">reduction</span> of the (remaining) 
+        <span style="color: red; font-weight: bold;">uncertainty</span>.
+    </p>
+    <div class="block" style="margin-top: 30px;">
+        <h3>Goal</h3>
+        <p>Iteratively propose new observations <span class="math">\(\bm{\mathcal{F}}_1, \bm{\mathcal{F}}_2, \dotsc\)</span> to quickly reduce the uncertainty about the target.</p>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>Comparison with "Naive" Design</h2>
+    <div style="text-align: center; margin-top: 20px;">
+        <p>Compare SUR design with static one.</p>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <img src="images/final_small_detection.png" alt="Comparison of designs" style="width: 60%; height: auto;">
+        <figcaption style="margin-top: 10px; font-size: 0.9em;">
+            True positives (excursion) as a function of the number of observations for different "volcanoes" (color-coded).
+        </figcaption>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <h3>Reach minimal uncertainty in <strong>half</strong> the size of <em>static</em> design.</h3>
+    </div>
+</section>
+
+<section data-auto-animate>
+    <h2>UQ on Excursion Volume</h2>
+    <div style="text-align: center; margin-bottom: 20px;">
+        <p>Sample from posterior volume distribution on 5 different regions.</p>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
+        <div style="width: 48%; text-align: center;">
+            <img src="images/histogram_with_small_volumes.png" alt="Prior Distribution" style="width: 100%; height: auto;">
+        </div>
+        <div style="width: 48%; text-align: center;">
+            <img src="images/histogram_posterior_small.png" alt="Posterior Distribution" style="width: 100%; height: auto;">
+        </div>
+    </div>
+    <div style="text-align: center; font-size: 0.9em; margin-bottom: 20px;">
+        Prior (left) and empirical posterior (right) distribution (after 450 observations) of the volume for each region. True volumes are denoted by vertical lines.
+    </div>
+    <div style="text-align: center;">
+        <h3>Demonstrate uncertainty reduction and peaking around true volume.</h3>
+    </div>
+</section>
+
+            <section data-auto-animate>
+                <h2>... and on goal</h2>
+                <h4><span class="mybrown">Deterministic</span> vs <span class="myyellow">Probabilistic</span></h4>
+                <div>
+                    <img src="./probabilistic_vs_deterministic.png">
+                </div>
+            </section>
+            </section>
+            <section data-auto-animate>
+                <h1>Thank you for your attention</h1>
+            </section>
+            <section data-auto-animate=>
+                <h1>Thank you for your attention</h1>
+                <br>
+                <h2>Questions?</h2>
+                <div>
+                    <img src="chrome_qrcode.png" height="950px">
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script src="plugin/math/math.js"></script>
+    <script>
+        Reveal.initialize({
+            controls: false, 
+
+             // The "normal" size of the presentation, aspect ratio will
+            // be preserved when the presentation is scaled to fit different
+            // resolutions. Can be specified using percentage units.
+            width: 1920,
+            height: 1200,
+
+            // Factor of the display size that should remain empty around
+            // the content
+            margin: 0.06,
+
+            // Bounds for smallest/largest possible scale to apply to content
+            minScale: 0.2,
+            maxScale: 2.0,
+            plugins: [RevealMath.KaTeX] });
+    </script>
+</body>
+</html>
