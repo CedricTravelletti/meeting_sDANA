@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>AI for the Life Sciences</title>
+    <title>Meeting HES / sDANA</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css" id="theme">
@@ -16,8 +16,11 @@
             <section data-background-image="./white_background.jpg">
                 <h1>ML for tackling Uncertainty in indirect, sparse geographical data</h1>
                 <br>
-                <div style="margin-top: 120px;">
+                <div style="margin-top: 100px;">
                     Cédric Travelletti<br>HES-SO Valais-Wallis Institute of Informatics, EPFL MathMat Group
+                </div>
+                <div style="margin-top: 60px; text-align: center;">
+                    <small>Available online at <span style="font-weight: bold;">https://cedrictravelletti.github.io/meeting_sDANA/</span></small>
                 </div>
             </section>
             <section data-auto-animate data-background-image="./white_background.jpg">
@@ -27,16 +30,23 @@
             <section data-auto-animate data-background-image="./white_background.jpg">
                 <h2>Goal for today</h2>
                 <p>Investigate potential collaborations at the intersection of the interests of HES and sDANA</p>
-                <h3>What do we have in common?</h3>
+                <h3 style="margin-top: 50px;">What do we have in common?</h3>
                 <p>Our data is:</p>
                 <ul>
-                    <li>geographical</li>
-                    <li>indirect</li>
-                    <li>sparse</li>
+                    <li style="color: red; font-weight: bold;">geographical</li>
+                    <li style="color: red; font-weight: bold;">indirect</li>
+                    <li style="color: red; font-weight: bold;">sparse</li>
                 </ul>
-                <p>and most of all: UNCERTAIN</p>
+                <p style="margin-top: 120px;">and most of all: <span style="color: red; font-weight: bold;">UNCERTAIN</span></p>
             </section>
 
+            <section data-auto-animate>
+                <h2>Uncertainty in Data and in PREDICTION</h2>
+                <h4><span class="mybrown">Deterministic</span> vs <span class="myyellow">Probabilistic</span></h4>
+                <div>
+                    <img src="./images/probabilistic_vs_deterministic.png">
+                </div>
+            </section>
 
 
 <section data-auto-animate>
@@ -151,7 +161,7 @@
         <p>For most inverse problems, data is not sufficient to identify a unique solution.</p>
     </div>
     <div style="margin-top: 40px; text-align: center;">
-        <h3 style="color: blue;">Conclusion:</h3>
+        <h3 style="margin-top: 150px; margin-bottom: 40px; color: blue;">Conclusion:</h3>
         <h3 style>Have to restrict search space by injecting prior knowledge.</h3>
     </div>
 </section>
@@ -163,13 +173,13 @@
         <p>In most situations, data is hard to collect.</p>
     </div>
     <ul style="margin-top: 20px;">
-        <li>Expansive</li>
+        <li>Expensive</li>
         <li>Time-consuming</li>
         <li>Dangerous (volcano/glacier inversion)</li>
         <li>Invasive (medicine)</li>
     </ul>
     <div style="margin-top: 40px; text-align: center;">
-        <h3 style="color: blue;">Conclusion:</h3>
+        <h3 style="margin-top: 150px; margin-bottom: 40px; color: blue;">Conclusion:</h3>
         <h3>Need to identify the most promising data to collect.</h3>
     </div>
 </section>
@@ -268,7 +278,7 @@
 </section>
 <section data-auto-animate>
     <div data-id="animcontainer">
-    <img height="600px" src="./promising_region.png">
+    <img height="600px" src="./images/promising_region.png">
     </div>
     <div data-id="animtext">
         At the end, obtain a <span class="stronger">distribution</span> of probable functional shapes for $\rho^*$.
@@ -349,15 +359,15 @@
 <section data-auto-animate>
     <h2>Gaussian Process-based Inversion</h2>
     <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
-        <div style="width: 35%; text-align: center;">
+        <div style="width: 32%; text-align: center;">
             <img src="images/excu_profile_small_1_1.png" alt="XY Projection" style="width: 100%;">
             <h4>XY Projection</h4>
         </div>
-        <div style="width: 35%; text-align: center;">
+        <div style="width: 32%; text-align: center;">
             <img src="images/excu_profile_small_1_2.png" alt="XZ Projection" style="width: 100%;">
             <h4>XZ Projection</h4>
         </div>
-        <div style="width: 35%; text-align: center;">
+        <div style="width: 32%; text-align: center;">
             <img src="images/excu_profile_small_1_3.png" alt="YZ Projection" style="width: 100%;">
             <h4>YZ Projection</h4>
         </div>
@@ -390,12 +400,11 @@
 <section data-auto-animate>
     <h2>Comparison with "Naive" Design</h2>
     <div style="text-align: center; margin-top: 20px;">
-        <p>Compare SUR design with static one.</p>
     </div>
     <div style="text-align: center; margin-top: 20px;">
         <img src="images/final_small_detection.png" alt="Comparison of designs" style="width: 60%; height: auto;">
         <figcaption style="margin-top: 10px; font-size: 0.9em;">
-            True positives (excursion) as a function of the number of observations for different "volcanoes" (color-coded).
+            True positives (excursion) as a function of the number of observations for different targets (color-coded).
         </figcaption>
     </div>
     <div style="text-align: center; margin-top: 20px;">
@@ -406,7 +415,7 @@
 <section data-auto-animate>
     <h2>UQ on Excursion Volume</h2>
     <div style="text-align: center; margin-bottom: 20px;">
-        <p>Sample from posterior volume distribution on 5 different regions.</p>
+        <p>Sample from posterior volume distribution on 5 different targets.</p>
     </div>
     <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
         <div style="width: 48%; text-align: center;">
@@ -424,13 +433,6 @@
     </div>
 </section>
 
-            <section data-auto-animate>
-                <h2>... and on goal</h2>
-                <h4><span class="mybrown">Deterministic</span> vs <span class="myyellow">Probabilistic</span></h4>
-                <div>
-                    <img src="./probabilistic_vs_deterministic.png">
-                </div>
-            </section>
             </section>
             <section data-auto-animate>
                 <h1>Thank you for your attention</h1>
